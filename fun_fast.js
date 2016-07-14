@@ -4,41 +4,50 @@
 (function () {
 
     function handleSquare (element, clickyValue, transformValue, transformValue2) {
-        element.setAttribute('clicky', clickyValue);
+        element.dataset.toggle  = clickyValue;
         element.style.transform = transformValue;
         transformValue2 && setTimeout(function () {
             element.style.transform = transformValue2;
-        }, 4000);
+        }, 2500);
     }
 
-    document.getElementById("viewId").addEventListener('click', function (evt) {
-        var clicked         = evt.target.parentNode,
-            clickyValue     = clicked.getAttribute('clicky') === 'True' ? 'False' : 'True',
-            highOffset      = window.innerHeight - clicked.offsetHeight - 40,
+    function clickHandle (evt) {
+        var element         = evt.target.parentNode,
+            //key             = element.classList[element.classList.length - 1], //varianta 1
+            key2            = element.dataset.color,
+            toggleValue     = element.dataset.toggle === 'True' ? 'False' : 'True',
+            highOffset      = window.innerHeight - element.offsetHeight - 40,
             functionMapping = {
                 'red'  : {
-                    fn        : handleSquare,
                     valueFalse: 'translate(0px, 0px)',
                     valueTrue : 'translate('.concat(116 * 2 + 80, 'px, ', highOffset, 'px)')
                 },
                 'blue' : {
-                    fn        : handleSquare,
                     valueFalse: 'translate(0px, 0px)',
                     valueTrue : 'translate(0px,'.concat(highOffset, 'px)')
                 },
                 'green': {
-                    fn        : handleSquare,
-                    valueFalse: 'translate(0px,'.concat(highOffset, 'px)'),
-                    valueTrue : 'translate(0px,'.concat(highOffset, 'px)'),
-                    value2True: 'translate('.concat(-116 - 40, 'px, ', highOffset, 'px)'),
-                    value2False:'translate(0px, 0px)'
+                    valueFalse : 'translate(0px,'.concat(highOffset, 'px)'),
+                    valueTrue  : 'translate(0px,'.concat(highOffset, 'px)'),
+                    value2True : 'translate('.concat(-116 - 40, 'px, ', highOffset, 'px)'),
+                    value2False: 'translate(0px, 0px)'
                 }
-            };
+            },
+            //square          = functionMapping[key]; //varianta 1
+            square          = functionMapping[key2];
 
-        Object.keys(functionMapping).forEach(function (key) {
-            var square = functionMapping[key];
+//        element.className.indexOf(key) !== -1 && handleSquare(element, toggleValue, square['value'.concat(toggleValue)], square['value2'.concat(toggleValue)]); //varianta 1
+        element.className.indexOf(key2) !== -1 && handleSquare(element, toggleValue, square['value'.concat(toggleValue)], square['value2'.concat(toggleValue)]);
+    }
 
-            clicked.className.indexOf(key) !== -1 && square.fn(clicked, clickyValue, square['value'.concat(clickyValue)],square['value2'.concat(clickyValue)]);
-        });
-    });
+    document.getElementById("viewId").addEventListener('click', clickHandle);
 })();
+
+//sa scot functia in afara
+//redenumirea lui clicked cu element
+//clicky <-> toggle ; toggleValue
+//scot fn
+//sa modific partea cu object.keys
+// lucrez cu dataset
+
+//event preventdefault si stoppropagation
